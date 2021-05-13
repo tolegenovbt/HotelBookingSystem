@@ -1,10 +1,13 @@
+from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
+
 # Create your models here.
+from utils.constants import USER_ROLES, USER_ROLE_CUSTOMER
 
 
 class MainUserManager(BaseUserManager):
@@ -43,7 +46,7 @@ class MainUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('is_staff'), default=False)
-
+    role = models.SmallIntegerField(choices=USER_ROLES, default=USER_ROLE_CUSTOMER)
     # avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
     objects = MainUserManager()
@@ -52,6 +55,21 @@ class MainUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     class Meta:
-        abstract = True
         verbose_name = _('user')
         verbose_name_plural = _('users')
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars', null=True, blank=True, validators=[
+        FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg'])])
+
+    class Meta:
+        verbose_name = 'Profile'
+        verbose_name_plural = 'Profiles'
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'user_id': self.user
+        }
