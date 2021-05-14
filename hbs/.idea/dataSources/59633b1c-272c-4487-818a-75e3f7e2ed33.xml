@@ -1122,6 +1122,7 @@ UC/10
     </table>
     <table id="55" parent="22" name="api_reservation">
       <ObjectId>58415</ObjectId>
+      <Outdated>1</Outdated>
       <Owner>demo_user</Owner>
       <StateNumber>868</StateNumber>
     </table>

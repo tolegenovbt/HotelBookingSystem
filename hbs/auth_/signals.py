@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 
@@ -12,7 +11,7 @@ from auth_.models import Profile, MainUser
 def delete_avatar_on_profile_delete(sender, instance, *args, **kwargs):
     avatar = instance.avatar
     if avatar:
-        user_avatar_path = os.path.abspath(os.path.join(avatar.path, '../'))
+        user_avatar_path = os.path.abspath(os.path.join(avatar.path, '..'))
         shutil.rmtree(user_avatar_path)
 
 

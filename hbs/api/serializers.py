@@ -56,44 +56,86 @@ from .models import Hotel, Room, Reservation, RoomPhoto, Transaction, HotelPhoto
 #         return hotel
 
 # class UserSerializer(serializers.)
-class HotelSerializerShort(serializers.ModelSerializer):
+
+
+class HotelPhotoSerializer(serializers.ModelSerializer):
+    hotel_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = HotelPhoto
+        fields = '__all__'
+
+
+class BaseHotelSerializer(serializers.ModelSerializer):
+    hotel_photos = HotelPhotoSerializer(many=True, read_only=True)
+
     class Meta:
         model = Hotel
-        fields = ['id', 'name', 'city', 'number_of_stars']
+        fields = '__all__'
+        abstract = True
+
+
+class HotelSerializerShort(BaseHotelSerializer):
+    class Meta:
+        model = Hotel
+        fields = ['id', 'name', 'city', 'number_of_stars', 'hotel_photos']
         # fields = ['__all__']
 
 
-class HotelSerializer(serializers.ModelSerializer):
+class HotelSerializer(BaseHotelSerializer):
     class Meta:
         model = Hotel
         fields = '__all__'
 
 
-class RoomPhotoSerializer(serializers.ModelSerializer):
+class RoomPhotoSerializer(serializers.Serializer):
     room_id = serializers.IntegerField(write_only=True)
+    photo = serializers.ImageField()
 
-    class Meta:
-        model = RoomPhoto
-        fields = ['photo', 'room_id']
+    def create(self, validated_data):
+        room_photo = RoomPhoto()
+        room_photo.room_id = validated_data.get('room_id')
+        room_photo.photo = validated_data.get('photo')
+        room_photo.save()
+        return room_photo
+
+    def update(self, instance, validated_data):
+        instance.photo = validated_data.get('photo', instance.photo)
+        instance.save()
+        return instance
 
 
-class RoomSerializer(serializers.ModelSerializer):
+# class RoomPhotoSerializer(serializers.ModelSerializer):
+#     room_id = serializers.IntegerField(write_only=True)
+#
+#     class Meta:
+#         model = RoomPhoto
+#         fields = ['photo', 'room_id']
+
+
+class BaseRoomSerializer(serializers.ModelSerializer):
     room_photos = RoomPhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
         fields = ['id', 'hotel', 'cost', 'area', 'king_bed', 'queen_bed', 'tv', 'wifi', 'kitchen', 'extra_bed',
                   'room_photos']
+        abstract = True
 
 
-class RoomSerializerShort(serializers.ModelSerializer):
+class RoomSerializer(BaseRoomSerializer):
     class Meta:
         model = Room
-        fields = ['id', 'type', 'cost', 'area']
+        fields = '__all__'
+
+
+class RoomSerializerShort(BaseRoomSerializer):
+    class Meta:
+        model = Room
+        fields = ['id', 'type', 'cost', 'area', 'room_photos']
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Reservation
         fields = '__all__'
@@ -102,7 +144,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 class ReservationSerializerShort(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ['id', 'room', 'check_in', 'check_out']
+        fields = ['id', 'room', 'hotel', 'check_in', 'check_out']
 
 
 # class CustomerSerializer(serializers.ModelSerializer):
@@ -112,21 +154,34 @@ class ReservationSerializerShort(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+    reservation_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = Transaction
+        # fields = ['reservation_id', 'reference_number']
         fields = '__all__'
 
 
-class HotelPhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HotelPhoto
-        fields = '__all__'
+class BaseCommentSerializer(serializers.ModelSerializer):
+    customer_id = serializers.IntegerField(write_only=True)
+    hotel_id = serializers.IntegerField(write_only=True)
 
-
-class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+        abstract = True
+
+
+class CommentSerializer(BaseCommentSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
+# class CommentSerializerShort(BaseCommentSerializer):
+#     class Meta:
+#         model = Comment
+#         fields = ['id', ]
 # class ListSerializerFull(serializers.ModelSerializer):
 #     class Meta:
 #         model = List

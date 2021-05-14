@@ -100,8 +100,10 @@ class Photos(models.Model):
 
 
 class HotelPhoto(Photos):
-    photo = models.ImageField(upload_to='hotel_photos')
-    hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True)
+    photo = models.ImageField(upload_to='hotel_photos', null=True, blank=True, validators=[
+        FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg'])])
+    hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True,
+                              related_name="hotel_photos")
 
 
 class RoomPhoto(Photos):
@@ -144,7 +146,8 @@ class Reservation(models.Model):
 
 
 class Transaction(models.Model):
-    reservation = models.OneToOneField(Reservation, verbose_name="Reservation", on_delete=models.CASCADE, null=True)
+    reservation = models.OneToOneField(Reservation, verbose_name="Reservation", on_delete=models.CASCADE, null=True,
+                                       related_name="reservation_transaction")
     reference_number = models.IntegerField("Reference number")
 
     class Meta:
@@ -153,10 +156,12 @@ class Transaction(models.Model):
 
 
 class Comment(models.Model):
-    customer = models.ForeignKey(MainUser, verbose_name="Customer", on_delete=models.CASCADE, null=True)
-    hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True)
+    customer = models.ForeignKey(MainUser, verbose_name="Customer", on_delete=models.CASCADE, null=True,
+                                 related_name="customer_comments")
+    hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True,
+                              related_name="hotel_comments")
     text = models.TextField("Comment Text")
-    number_of_stars = models.IntegerField("Number of stars", choices=star_numbers)
+    rating = models.IntegerField("Number of stars", choices=star_numbers)
 
     class Meta:
         verbose_name = "Comment"
@@ -164,4 +169,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return '%s: %s' % (self.customer.first_name, self.text)
-

@@ -20,7 +20,9 @@ class CreateUserViewSet(viewsets.ModelViewSet):
     @action(methods=['POST'], detail=False, permission_classes=(AllowAny,))
     def post_user(self, request):
         user = request.data
-        queryset = MainUser.objects.create_user(email=user['email'], password=user['password'], first_name=user['first_name'], last_name=user['last_name'], role=user['role'])
+        queryset = MainUser.objects.create_user(email=user['email'], password=user['password'],
+                                                first_name=user['first_name'], last_name=user['last_name'],
+                                                role=user['role'])
         queryset.save()
         return Response(user, status=status.HTTP_201_CREATED)
 
@@ -30,6 +32,3 @@ class ProfileApiViewSet(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (AllowAny,)
     queryset = Profile.objects.all()
     parser_classes = [FormParser, JSONParser, MultiPartParser]
-
-    def perform_update(self, serializer):
-        instance = serializer.save()

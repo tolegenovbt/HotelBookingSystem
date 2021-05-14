@@ -71,5 +71,6 @@ class Profile(models.Model):
     def to_json(self):
         return {
             'id': self.id,
-            'user_id': self.user
+            'user_id': self.user,
+            # 'avatar': self.avatar
         }
