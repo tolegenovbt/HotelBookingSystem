@@ -1,4 +1,4 @@
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, RegexValidator
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
@@ -61,6 +61,7 @@ class MainUser(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
     user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
+    phone_number = models.CharField('Phone Number', max_length=17, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars', null=True, blank=True, validators=[
         FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg'])])
 

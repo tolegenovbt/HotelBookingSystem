@@ -1,12 +1,13 @@
+import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator
 from django.db import models
-
-# Create your models here.
 from django.db.models.base import Model
+from rest_framework.exceptions import ValidationError
 
 from auth_.models import MainUser
-
+from utils.constants import star_numbers, room_type, status_choices
 
 # class User(MainUser):
 #     gender = models.CharField("Gender", max_length=20, choices=gender)
@@ -28,7 +29,27 @@ from auth_.models import MainUser
 #     class Meta:
 #         verbose_name = "Hotelier"
 #         verbose_name_plural = "Hoteliers"
-from utils.constants import star_numbers, room_type, status_choices
+
+def is_valid_date(value):
+    if datetime.date.today() < value:
+        raise ValidationError("You can make reservation for future date only")
+
+
+def is_valid_number(value):
+    if value < 0:
+        raise ValidationError("The cost can not be negative number")
+
+
+def is_valid_account_number(value):
+    value = len(value)
+    if 8 > value > 12:
+        raise ValidationError("Please enter valid account number")
+
+
+def is_valid_comment(value):
+    value = len(value)
+    if value >= 1:
+        raise ValidationError("Please add some words!")
 
 
 class HotelManager(models.Manager):
@@ -75,8 +96,8 @@ class Hotel(models.Model):
 class Room(models.Model):
     hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True)
     type = models.CharField("Type", choices=room_type, max_length=20)
-    cost = models.BigIntegerField("Cost")
-    area = models.IntegerField("Area")
+    cost = models.IntegerField("Cost", validators=[is_valid_number])
+    area = models.IntegerField("Area", validators=[is_valid_number])
     king_bed = models.IntegerField("King Bed")
     queen_bed = models.IntegerField("Queen Bed")
     tv = models.BooleanField("TV")
@@ -131,10 +152,10 @@ class Reservation(models.Model):
                              related_name="room_reservations")
     hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True,
                               related_name="hotel_reservations")
-    check_in = models.DateField("Check In")
-    check_out = models.DateField("Check Out")
+    check_in = models.DateField("Check In", validators=[is_valid_date])
+    check_out = models.DateField("Check Out", validators=[is_valid_date])
     # request_time = models.DateTimeField("Request Time", auto_now=True)
-    total_cost = models.BigIntegerField("Total Cost")
+    total_cost = models.IntegerField("Total Cost", validators=[is_valid_number])
     payment_status = models.IntegerField("Payment status", choices=status_choices)
 
     def __str__(self):
@@ -160,7 +181,7 @@ class Comment(models.Model):
                                  related_name="customer_comments")
     hotel = models.ForeignKey(Hotel, verbose_name="Hotel", on_delete=models.CASCADE, null=True,
                               related_name="hotel_comments")
-    text = models.TextField("Comment Text")
+    text = models.TextField("Comment Text", validators=[is_valid_comment])
     rating = models.IntegerField("Number of stars", choices=star_numbers)
 
     class Meta:

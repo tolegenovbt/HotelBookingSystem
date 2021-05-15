@@ -177,6 +177,24 @@ def transaction_view(request, pk):
         return Response({'deleted': True})
 
 
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = TransactionSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return TransactionSerializer
+        elif self.action == 'retrieve':
+            return TransactionSerializer
+        elif self.action == 'create':
+            return TransactionSerializer
+        elif self.action == 'update':
+            return TransactionSerializer
+        elif self.action == 'destroy':
+            return TransactionSerializer
+
+
 class CommentsViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = (AllowAny,)
