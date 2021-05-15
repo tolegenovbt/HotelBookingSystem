@@ -1,7 +1,4 @@
 # Hotel Booking System
-
-Description to this project [here](https://github.com/tolegenovbt/HotelBookingSystem/)
-   
    
 # Setups
 
