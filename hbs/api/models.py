@@ -31,7 +31,7 @@ from utils.constants import star_numbers, room_type, status_choices
 #         verbose_name_plural = "Hoteliers"
 
 def is_valid_date(value):
-    if datetime.date.today() < value:
+    if datetime.date.today() > value:
         raise ValidationError("You can make reservation for future date only")
 
 
@@ -52,11 +52,32 @@ def is_valid_comment(value):
         raise ValidationError("Please add some words!")
 
 
+class RoomManager(models.Manager):
+    use_in_migrations = True
+
+    def room_details_by_hotel(self, rk, pk):
+        return self.filter(id=pk, hotel=rk)
+
+
 class HotelManager(models.Manager):
     use_in_migrations = True
 
     def room_details_by_hotel(self, pk, rk):
-        return self.get(id=pk).hotel.filter(id=pk)
+        return self.filter(id=pk).filter(hotel=rk)
+
+
+class ReservationManager(models.Manager):
+    use_in_migrations = True
+
+    def reservations_by_hotel(self, pk):
+        return self.filter(hotel=pk)
+
+
+class CommentManager(models.Manager):
+    use_in_migrations = True
+
+    def comment_detail_by_hotel(self, hk, pk):
+        return self.filter(id=pk).filter(hotel=hk)
 
 
 class Hotel(models.Model):
@@ -104,6 +125,9 @@ class Room(models.Model):
     wifi = models.BooleanField("Wifi")
     kitchen = models.BooleanField("Kitchen")
     extra_bed = models.BooleanField("Extra Bed")
+
+    objects = RoomManager()
+
 
     def __str__(self):
         return str(self.hotel.name + " " + self.type)
@@ -158,6 +182,8 @@ class Reservation(models.Model):
     total_cost = models.IntegerField("Total Cost", validators=[is_valid_number])
     payment_status = models.IntegerField("Payment status", choices=status_choices)
 
+    objects = ReservationManager()
+
     def __str__(self):
         return self.room.type + ": " + str(self.customer)
 
@@ -183,6 +209,8 @@ class Comment(models.Model):
                               related_name="hotel_comments")
     text = models.TextField("Comment Text", validators=[is_valid_comment])
     rating = models.IntegerField("Number of stars", choices=star_numbers)
+
+    objects = CommentManager()
 
     class Meta:
         verbose_name = "Comment"

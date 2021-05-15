@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import generics, viewsets, status
@@ -16,6 +18,8 @@ from .serializers import HotelSerializer, HotelSerializerShort, HotelPhotoSerial
 
 
 # Create your views here.
+
+logger = logging.getLogger(__name__)
 
 
 class HotelsViewSet(viewsets.ModelViewSet):
@@ -53,14 +57,14 @@ class RoomsViewSet(viewsets.ModelViewSet):
             return RoomSerializer
 
     @action(methods=['GET'], detail=True, permission_classes=(AllowAny,))
-    def rooms_by_hotel(self, request, pk):
-        queryset = Room.objects.filter(hotel=pk)
+    def rooms_by_hotel(self, request, rk):
+        queryset = Room.objects.filter(hotel=rk)
         serializer = RoomSerializerShort(queryset, many=True)
         return Response(serializer.data)
 
     @action(methods=['GET'], detail=True, permission_classes=(AllowAny,))
     def room_details_by_hotel(self, request, pk, rk):
-        queryset = Room.objects.filter(id=rk, hotel=pk)
+        queryset = Room.objects.room_details_by_hotel(rk, pk)
         serializer = RoomSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -84,7 +88,7 @@ class ReservationsViewSet(viewsets.ModelViewSet):
 
     @action(methods=['GET'], detail=True, permission_classes=(AllowAny,))
     def reservations_by_hotel(self, request, pk):
-        queryset = Reservation.objects.filter(hotel=pk)
+        queryset = Reservation.objects.reservations_by_hotel(pk)
         serializer = ReservationSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -153,6 +157,11 @@ def transaction_list_post_view(request):
         serializer = TransactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            logger.debug(f'Transaction created ID: {serializer.instance}')
+            logger.info(f'Transaction created ID:  {serializer.instance}')
+            logger.warning(f'Transaction created ID:  {serializer.instance}')
+            logger.error(f'Transaction created ID:  {serializer.instance}')
+            logger.critical(f'Transaction created ID:  {serializer.instance}')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -228,6 +237,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def comments_by_hotel_detail(request, pk, hk):
-    queryset = Comment.objects.filter(id=pk, hotel=hk)
+    queryset = Comment.objects.comment_detail_by_hotel(hk, pk)
     serializer = CommentSerializer(queryset, many=True)
     return Response(serializer.data)

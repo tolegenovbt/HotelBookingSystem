@@ -1,0 +1,8 @@
+INFO -- 2021-05-15 10:46:30,566: Profile created ID: customer117@gmail.com
+WARNING -- 2021-05-15 10:46:30,567: Profile created ID: customer117@gmail.com
+ERROR -- 2021-05-15 10:46:30,567: Profile created ID: customer117@gmail.com
+CRITICAL -- 2021-05-15 10:46:30,567: Profile created ID: customer117@gmail.com
+INFO -- 2021-05-15 10:46:30,605: User created ID: {'first_name': 'John', 'last_name': 'Snow', 'email': 'customer117@gmail.com', 'password': '123123', 'role': 3}
+WARNING -- 2021-05-15 10:46:30,605: User created ID: {'first_name': 'John', 'last_name': 'Snow', 'email': 'customer117@gmail.com', 'password': '123123', 'role': 3}
+ERROR -- 2021-05-15 10:46:30,606: User created ID: {'first_name': 'John', 'last_name': 'Snow', 'email': 'customer117@gmail.com', 'password': '123123', 'role': 3}
+CRITICAL -- 2021-05-15 10:46:30,606: User created ID: {'first_name': 'John', 'last_name': 'Snow', 'email': 'customer117@gmail.com', 'password': '123123', 'role': 3}

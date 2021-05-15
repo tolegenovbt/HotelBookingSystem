@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'rest_framework_jwt',
     'auth_',
@@ -154,3 +155,40 @@ REST_FRAMEWORK = {
 }
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGGING = {
+    # 'version': 1,
+    # 'disable_existing_loggers': True,
+    # 'debug': True,
+    # 'formatters': {
+    #     'verbose': {
+    #         'format': '%(levelname)s -- %(asctime)s: %(message)s',
+    #     },
+    #     'simple': {
+    #         'format': '%(levelname)s -- %(message)s'
+    #     }
+    # },
+    # 'handlers': {
+    #     'file_handler': {
+    #         'level': 'INFO',
+    #         'class': 'logging.FileHandler',
+    #         'filename': 'test_main.log',
+    #         'formatter': 'verbose'
+    #     },
+    #     'console_handler': {
+    #         'level': 'DEBUG',
+    #         'class': 'logging.StreamHandler',
+    #         'formatter': 'simple'
+    #     }
+    # },
+    # 'loggers': {
+    #     'api': {
+    #         'handlers': ['file_handler', 'console_handler'],
+    #         'level': 'DEBUG',
+    #     },
+    #     'auth_': {
+    #         'handlers': ['file_handler', 'console_handler'],
+    #         'level': 'DEBUG',
+    #     }
+    # },
+}

@@ -1,3 +1,5 @@
+import logging
+
 import rest_framework.generics as generics
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -8,6 +10,7 @@ from rest_framework.response import Response
 from auth_.models import MainUser, Profile
 from auth_.serializers import UserSerializer, ProfileSerializer
 
+logger = logging.getLogger(__name__)
 
 class CreateUserViewSet(viewsets.ModelViewSet):
     queryset = MainUser.objects.all()
@@ -24,6 +27,11 @@ class CreateUserViewSet(viewsets.ModelViewSet):
                                                 first_name=user['first_name'], last_name=user['last_name'],
                                                 role=user['role'])
         queryset.save()
+        logger.debug(f'User created ID: {user}')
+        logger.info(f'User created ID: {user}')
+        logger.warning(f'User created ID: {user}')
+        logger.error(f'User created ID: {user}')
+        logger.critical(f'User created ID: {user}')
         return Response(user, status=status.HTTP_201_CREATED)
 
 
