@@ -3,15 +3,15 @@
 Description to this project [here](https://github.com/tolegenovbt/HotelBookingSystem/)
    
    
-## Setups
+# Setups
 
 
-# Clone the repository
+## Clone the repository
 
 [git repository](https://github.com/tolegenovbt/HotelBookingSystem/):
  * `git clone git://github.com/tolegenovbt/HotelBookingSystem.git`
 
-# Virtual Environment
+## Virtual Environment
 ```
 pip install virtualenvwrapper
 mkvirtualenv yourOptinallyEnvironmentName
@@ -19,7 +19,7 @@ workon yourOptinallyEnvironmentName
 pip install -r requirements.txt
 ```
 
-# PostgreSQL
+## PostgreSQL
 
 1. Install [PostgreSQL](https://www.postgresql.org/download/)
 2. Start SQL Shell
@@ -45,7 +45,7 @@ DATABASES = {
  ```
 
 
-## Postman Import
+### Postman Import
 
 Link to postman collection is [here](https://www.getpostman.com/collections/e6e8a607e899ae5d61b7)
 
